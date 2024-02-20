@@ -27,14 +27,14 @@ public class ServerBoards extends Thread{
 			// InputStream - 클라이언트에서 보낸 메세지 읽기
 			InputStream input = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-
+			
 			// OutputStream - 서버에서 클라이언트로 메세지 보내기
 			OutputStream out = socket.getOutputStream();
 			PrintWriter writer = new PrintWriter(out, true);
 			
-			// 데이터베이스에 접근하여 List<Post> posts 목록 채우기
-			DataBase database = new DataBase(1);
-			String readValue; // Client에서 보낸 값을 저장하는 String 변수
+			// Client에서 보낸 값을 저장하는 String 변수
+			String readValue;
+			
 			Board board = new Board(out);
 			// 작성자를 알 수 있는 번호
 			String writerName = socket.getInetAddress().toString();
@@ -74,10 +74,10 @@ public class ServerBoards extends Thread{
 							writer.println("-------------------------------------------------------");
 							writer.println(" | 내용 | :: ");
 							String mainTexts = reader.readLine();
-							
+							board.updatePost(3, title, writerName, mainTexts);
 							break;
 						case "2":
-							writer.println("취소되었습니다.");
+							writer.println("수정이 취소되었습니다.");
 							board.showMenu();
 							break;
 						default :
@@ -93,7 +93,7 @@ public class ServerBoards extends Thread{
 					board.deletePost(delNum);
 				} else if (readValue.equals("5")) {
 					writer.println("종료합니다.");
-					break;
+					return;
 				} else {
 					writer.println("선택한 번호의 게시판 기능이 없습니다. 다시 고르십시오.");
 					board.showMenu();

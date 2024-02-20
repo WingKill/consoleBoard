@@ -28,10 +28,10 @@ public class Post {
 	
 	
 	// 게시글 작성 시 사용하는 생성자
-	public Post(String subject,String writer,String mainText) {
+	public Post(String title,String writer,String mainText) {
 		maxNum = DataBase.getPostList().size();
 		this.postNum = ++maxNum;
-		this.title = subject;
+		this.title = title;
 		this.writer = writer;
 		this.mainText = mainText;
 	}

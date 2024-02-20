@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,7 +19,7 @@ public class DataBase extends Thread{
     private static final String user = "userdata";
     private static final String password = "data123";
     // 클라이언트에서 입력하는 접근 경로
-    private int page;
+    private int page = 0;
     // 데이터베이스에서 가져온 게시글 데이터들
     private static List<Post> postList = new ArrayList<Post>();
     // 페이지 
@@ -57,11 +58,21 @@ public class DataBase extends Thread{
 	public void setPost(Post post) {
 		this.post = post;
 	}
-
 	
+	// String 형을 Timestamp형으로 변환하여 리턴하는 메서드. oracle sql이므로 Timestamp형을 썼다.
+	// 이 자바 클래스 내 사용하는 Date 클래스는 java.util.Date이고 이미 import했으므로, java.sql.Date로 바꾸려면 따로 써줘야 함.
+	private Timestamp strFormatTs(String dateStr) throws ParseException {
+		// 들어가 있는 문자열을 Date 객체로 변환한 뒤 statement에 대입
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = sdf.parse(dateStr);
+		// Oracle sql에 넣을 것이므로 Timestamp 클래스 활용 가능
+		Timestamp timestamp = new Timestamp(date.getTime());
+		return timestamp;
+	}
     
 	@Override
 	public synchronized void run() {
+		// try with resource - connection close를 따로 처리하지 않아도 자동 처리
 		try (Connection connection = DriverManager.getConnection(url, user, password)) {
 			// page 정보 - 1 : 목록, 2 : 입력, 3 : 수정, 4 : 삭제
 			String sql = null;
@@ -77,6 +88,11 @@ public class DataBase extends Thread{
 			PreparedStatement statement = connection.prepareStatement(sql);
 			switch(page) {
 			case 1 : // 목록
+				/*
+				 * "SELECT " + "postnum," + " writer," + " title," + " main_text," +
+				 * " to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate " +
+				 * "FROM post order by postnum desc;"
+				 */
 				ResultSet resultSet = statement.executeQuery(); // 쿼리 실행
 				postList.clear();
 				while(resultSet.next()) {
@@ -98,20 +114,19 @@ public class DataBase extends Thread{
 				statement.setString(2, post.getTitle());
 				statement.setString(3, post.getWriter());
 				statement.setString(4, post.getMainText());
-				// 들어가 있는 문자열을 Date 객체로 변환한 뒤 statement에 대입
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				Date date = sdf.parse(post.getWriteDate());
-				// Oracle sql에 넣을 것이므로 Timestamp 클래스 활용 가능
-				Timestamp timestamp = new Timestamp(date.getTime());
-				statement.setTimestamp(5, timestamp);
+				// 기존에 만들어놓은 변환 메서드 사용
+				statement.setTimestamp(5, strFormatTs(post.getWriteDate()));
 				// 쿼리 실행
 				statement.executeUpdate(); 
 				break;
 			case 3 : // 수정
-				// "update post set TITLE = ? , MAIN_TEXT = ? , update_date = sysdate where postnum = ?;"
+				// "update post set TITLE = ? , MAIN_TEXT = ? , update_date = ? where postnum = ?;"
 				statement.setString(1,post.getTitle());
 				statement.setString(2,post.getMainText());
-				statement.setInt(3, post.getPostNum());
+				// 기존에 만들어놓은 변환 메서드 사용
+				statement.setTimestamp(3, strFormatTs(post.getUpdateDate()));
+				statement.setInt(4, post.getPostNum());
+				
 				statement.executeUpdate();
 				break;
 			case 4 : // 삭제
@@ -119,11 +134,10 @@ public class DataBase extends Thread{
 				statement.setInt(1, post.getPostNum());
 				statement.executeUpdate();
 				break;
-			}
-				
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
-		}		
+		} 	
 	}
 	
 	// 모든 작성글 목록 쿼리 
