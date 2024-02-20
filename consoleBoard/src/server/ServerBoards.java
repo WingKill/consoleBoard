@@ -27,6 +27,7 @@ public class ServerBoards extends Thread{
 		this.socket = socket;
 	}
 	
+	// 입력 텍스트
 	private void insertText() throws IOException {
 		writer.println("-------------------------------------------------------");
 		writer.println(" | 제목 | :: ");
@@ -44,6 +45,7 @@ public class ServerBoards extends Thread{
 		board.addPost("B", title, name, mainTexts);
 	}
 	
+	// 수정 텍스트
 	private void updateText() throws IOException {
 		writer.println("| 수정할 글 번호 | :: ");
 		String updatePageStr = reader.readLine();
