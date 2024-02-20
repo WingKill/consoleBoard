@@ -97,9 +97,9 @@ public class DataBase extends Thread{
 			switch(page) {
 			case "A" : // 목록
 				/*
-				 * "SELECT " + "postnum," + " writer," + " title," + " main_text," +
-				 * " to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate " +
-				 * "FROM post order by postnum desc"
+				 * "SELECT postnum, writer, title, main_text,
+				 * to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate,
+				 * WRITER_IP FROM post order by postnum desc"
 				 */ 
 				// 쿼리 실행
 				ResultSet resultSet = statement.executeQuery();
@@ -110,25 +110,23 @@ public class DataBase extends Thread{
 					String title = resultSet.getString("title");
 					String mainText = resultSet.getString("main_text");
 					String writeDate = resultSet.getString("writedate");
-					String writerName = resultSet.getString("writername");
-					if(writerName == null) {
-						writerName = "초기값 없음";
+					String writerIP = resultSet.getString("WRITER_IP");
+					if(writerIP == null) {
+						writerIP = "초기값 없음";
 					}
-					post = new Post(postNum,title,writer,mainText,writeDate, writerName);
+					post = new Post(postNum,title,writer,mainText,writeDate, writerIP);
 					postList.add(post);
 				}		
 				break;
 			case "B" : // 입력
-			/*	"insert into "
-				+  "post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE) "
-				+  "values (?, ?, ?, ?, ?, ?)" */
+			/*	insert into post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE, WRITER_IP) values (?, ?, ?, ?, ?, ?) */
 				statement.setInt(1, post.getPostNum());
 				statement.setString(2, post.getTitle());
 				statement.setString(3, post.getWriter());
 				statement.setString(4, post.getMainText());
 				// 기존에 만들어놓은 변환 메서드 사용
 				statement.setTimestamp(5, strFormatTs(post.getWriteDate()));
-				statement.setString(6, post.getWriterName());
+				statement.setString(6, post.getWriterIP());
 				statement.executeUpdate(); 
 				break;
 			case "D" : // 수정
@@ -154,12 +152,12 @@ public class DataBase extends Thread{
 	
 	// 모든 작성글 목록 쿼리 
 	private String boardListQuery() {
-		return "SELECT postnum, writer, title, main_text,to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate, writername FROM post order by postnum desc";
+		return "SELECT postnum, writer, title, main_text,to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate, WRITER_IP FROM post order by postnum desc";
 	}
 	
 	// insert 쿼리
 	private String insertPostQuery() {	
-		return "insert into post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE, writername) values (?, ?, ?, ?, ?, ?)";
+		return "insert into post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE, WRITER_IP) values (?, ?, ?, ?, ?, ?)";
 	}
 	
 	// update 쿼리

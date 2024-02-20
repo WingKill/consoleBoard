@@ -17,7 +17,7 @@ public class ServerBoards extends Thread{
 	private OutputStream out;
 	private PrintWriter writer;
 	// 작성자를 알 수 있는 번호
-	private String writerName; 
+	private String writerIP; 
 	private Board board;
 	
 	// Client에서 보낸 값을 저장하는 String 변수
@@ -50,23 +50,21 @@ public class ServerBoards extends Thread{
 		Integer updatePage = Integer.parseInt(updatePageStr);
 		
 		// 글을 작성한 작가가 같고, 게시글이 있다면		
-		if(board.wantUpdatePost(updatePage).getWriterName().equals(writerName) && board.wantUpdatePost(updatePage) != null ) {
+		if(board.wantUpdatePost(updatePage).getWriterIP().equals(writerIP) && board.wantUpdatePost(updatePage) != null ) {
 			writer.println("-------------------------------------------------------");
 			writer.println(" | 제목 | :: ");
 	
 			String title = reader.readLine();
 			writer.println();
 			writer.println("-------------------------------------------------------");
-			writer.print(" | 작성자 | :: ");
-
+			writer.println(" | 작성자 | :: ");
 			String name = reader.readLine();	
 			writer.println();
 			writer.println("-------------------------------------------------------");
-			writer.print(" | 내용 | :: ");
-		
+			writer.println(" | 내용 | :: ");		
 			String mainTexts = reader.readLine();
 			writer.println();
-			board.updatePost(updatePage, title, name, writerName, mainTexts);
+			board.updatePost(updatePage, title, name, writerIP, mainTexts);
 		}else {
 			writer.println("수정 권한이 없거나 잘못된 경로로 진입했습니다. 메뉴로 돌아갑니다.");
 			board.showMenu();
@@ -86,8 +84,8 @@ public class ServerBoards extends Thread{
 			out = socket.getOutputStream();
 			writer = new PrintWriter(out, true);		
 			
-			writerName = socket.getInetAddress().toString();
-			board = new Board(out,writerName);
+			writerIP = socket.getInetAddress().toString();
+			board = new Board(out,writerIP);
 
 			writer.println("--<게시판 프로그램>--");
 			board.showMenu();
@@ -101,7 +99,7 @@ public class ServerBoards extends Thread{
 					writer.println("| 내용을 확인할 글 번호 | :: ");
 					String str = reader.readLine();
 					int showNum = Integer.parseInt(str);
-					board.showAndUpdatePost(showNum, writerName); // 내용 보기와 수정 여부 판별			
+					board.showAndUpdatePost(showNum, writerIP); // 내용 보기와 수정 여부 판별			
 				} else if (readValue.equals("D") || readValue.equals("Y")) { // 수정
 					updateText(); 
 				}else if (readValue.equals("N")) {
@@ -111,7 +109,7 @@ public class ServerBoards extends Thread{
 					writer.println(" | 삭제할 글 번호 | :: ");
 					String str = reader.readLine();
 					int delNum = Integer.parseInt(str);
-					board.deletePost(writerName,delNum);
+					board.deletePost(writerIP,delNum);
 				} else if (readValue.equals("F")) {
 					writer.println("종료합니다.");
 					return;

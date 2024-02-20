@@ -10,7 +10,7 @@ public class Post {
 	private String writeDate;
 	private String updateDate;
 	// 동일인인지 확인하는 수단으로 쓰이는 문자열
-	private String writerName;
+	private String writerIP;
 	
 	
 	// 게시글이 전혀 없는 상태일 때 호출해 줄 생성자
@@ -19,13 +19,13 @@ public class Post {
 	}
 	
 	// 데이터베이스에서 가져와 대입하는 생성자
-	public Post(int postNum,String title,String writer,String mainText,String writeDate, String writerName) {
+	public Post(int postNum, String title,String writer,String mainText,String writeDate, String writerName) {
 		this.postNum = postNum;
 		this.title = title;
 		this.writer = writer;
 		this.mainText = mainText;
 		this.writeDate = writeDate;
-		this.writerName = writerName;
+		this.writerIP = writerName;
 	}
 	
 	// 게시글 작성 시 사용하는 생성자
@@ -93,11 +93,11 @@ public class Post {
 		this.mainText = mainText;
 	}
 
-	public String getWriterName() {
-		return writerName;
+	public String getWriterIP() {
+		return writerIP;
 	}
 
-	public void setWriterName(String writerName) {
-		this.writerName = writerName;
+	public void setWriterIP(String writerName) {
+		this.writerIP = writerName;
 	}	
 }

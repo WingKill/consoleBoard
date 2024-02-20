@@ -21,11 +21,11 @@ public class Board {
     // 게시글 추가, 수정, 삭제 시 활용할 Post형 변수
     private Post post;
     // 게시글 추가, 수정, 삭제 시 활용할, 동일 대상 유무를 확인하는 용도로 쓰이는 문자열
-    private String writerName;
+    private String writerIP;
     
-    public Board(OutputStream out, String writerName) {
+    public Board(OutputStream out, String writerIP) {
     	writer = new PrintWriter(out, true);
-    	this.writerName = writerName;
+    	this.writerIP = writerIP;
     	// 데이터베이스 목록을 가져오기 위해 먼저 데이터베이스 쓰레드 실행.
     	resetList();
     }
@@ -46,12 +46,12 @@ public class Board {
 		this.updatePage = updatePage;
 	}	
 	
-	public String getWriterName() {
-		return writerName;
+	public String getWriterIP() {
+		return writerIP;
 	}
 
-	public void setWriterName(String writerName) {
-		this.writerName = writerName;
+	public void setWriterIP(String writerIP) {
+		this.writerIP = writerIP;
 	}
 
 	// 메뉴
@@ -109,7 +109,7 @@ public class Board {
 		post = new Post(title,name,mainTexts);
 		// 작성 날짜에 대한 패턴 지정
 		post.setWriteDate(nowDateFormatStr());
-		post.setWriterName(writerName);
+		post.setWriterIP(writerIP);
 		
 		list.add(post);
 		// 데이터베이스 처리
@@ -120,6 +120,8 @@ public class Board {
 		
 		// post 초기화
 		post = new Post();
+		// 리스트 초기화
+		resetList();
 		showMenu();
 		serverShowList();
 	}
@@ -156,8 +158,8 @@ public class Board {
 	}
 	
 	// 글을 수정하는 과정
-	public void updatePost(int page, String title, String name, String writerName,String mainTexts) {
-		if(post.getPostNum() == page && this.writerName.equals(writerName)) {
+	public void updatePost(int page, String title, String name, String writerIP,String mainTexts) {
+		if(post.getPostNum() == page && this.writerIP.equals(writerIP)) {
 			post.setTitle(title);
 			post.setMainText(mainTexts);
 			// 날짜 까먹지 않기.
@@ -165,35 +167,38 @@ public class Board {
 			DataBase dataBase = new DataBase("D",post);
 			dataBase.start();
 			writer.println("수정되었습니다.");
-			System.out.println(post.getPostNum()+"번 글이 " + writerName + "에 의해 수정되었습니다.");
+			System.out.println(post.getPostNum()+"번 글이 " + writerIP + "에 의해 수정되었습니다.");
 		}else {
 			writer.println("정상적인 처리가 되지 않았습니다. 메뉴로 돌아갑니다.");
 		}
 		// 초기화
 		post = new Post();
+		resetList();
 		showMenu();
 		serverShowList();
 	}
 	
 	// 글을 삭제하는 과정
-	public void deletePost(String writerName, int delNum) {
+	public void deletePost(String writerIP, int delNum) {
 		for(Post post : list) {
 			if(post.getPostNum() == delNum)
 				// 삭제 대상인 post 분류
 				this.post = post; 
 		}
 		
-		if(post == null || !this.writerName.equals(writerName)) {
+		if(post == null || !this.writerIP.equals(writerIP)) {
 			writer.println("삭제가 진행되지 못하는 상태입니다. 메뉴로 돌아갑니다.");
 			showMenu();
 			return;
 		}
-		// 리스트에서 먼저 없애주기.
-		list.remove(post);
+		
 		// 데이터베이스에서도 없애주기.
 		DataBase dataBase = new DataBase("E", post);
 		dataBase.start();
+		
 		writer.println("삭제되었습니다.");
+		resetList();
+		
 		showMenu();
 		serverShowList();
 	}
