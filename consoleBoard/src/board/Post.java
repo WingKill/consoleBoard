@@ -1,7 +1,5 @@
 package board;
 
-import dataBase.DataBase;
-
 public class Post {
 	private static int maxNum; // 최대 게시글 
 	
@@ -11,6 +9,9 @@ public class Post {
 	private String mainText;
 	private String writeDate;
 	private String updateDate;
+	// 동일인인지 확인하는 수단으로 쓰이는 문자열
+	private String writerName;
+	
 	
 	// 게시글이 전혀 없는 상태일 때 호출해 줄 생성자
 	public Post() {
@@ -18,18 +19,18 @@ public class Post {
 	}
 	
 	// 데이터베이스에서 가져와 대입하는 생성자
-	public Post(int postNum,String title,String writer,String mainText,String writeDate) {
+	public Post(int postNum,String title,String writer,String mainText,String writeDate, String writerName) {
 		this.postNum = postNum;
 		this.title = title;
 		this.writer = writer;
 		this.mainText = mainText;
 		this.writeDate = writeDate;
+		this.writerName = writerName;
 	}
-	
 	
 	// 게시글 작성 시 사용하는 생성자
 	public Post(String title,String writer,String mainText) {
-		maxNum = DataBase.getPostList().size();
+		maxNum = Board.list_size;
 		this.postNum = ++maxNum;
 		this.title = title;
 		this.writer = writer;
@@ -90,5 +91,13 @@ public class Post {
 
 	public void setMainText(String mainText) {
 		this.mainText = mainText;
+	}
+
+	public String getWriterName() {
+		return writerName;
+	}
+
+	public void setWriterName(String writerName) {
+		this.writerName = writerName;
 	}	
 }

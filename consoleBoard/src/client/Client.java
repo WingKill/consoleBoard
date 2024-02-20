@@ -3,9 +3,8 @@ package client;
 import java.io.IOException;
 import java.net.Socket;
 
-import inputOutput.InputReader;
-import inputOutput.OutputWriter;
-
+import inputoutput.InputReader;
+import inputoutput.OutputWriter;
 
 public class Client {
 	private static int socketPort = 7777;

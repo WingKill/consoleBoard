@@ -8,8 +8,9 @@ import java.net.Socket;
 public class Server {
 	private static int socketPort = 7777;
 	public static void main(String[] args) {
+		ServerSocket serverSocket = null;
 		try {
-			ServerSocket serverSocket = new ServerSocket(socketPort);
+			serverSocket = new ServerSocket(socketPort);
 			System.out.println("server open"); 
 			// 소켓 서버가 종료될 때까지 무한루프
 			while (true) {
@@ -19,6 +20,14 @@ public class Server {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} finally {
+	        if (serverSocket != null) {
+	            try {
+	                serverSocket.close();
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }
+	        }
+	    }
 	}
 }

@@ -1,5 +1,4 @@
-package inputOutput;
-
+package inputoutput;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,9 +22,8 @@ public class OutputWriter extends Thread{
 			PrintWriter writer = new PrintWriter(out, true); 
 			
 			while(true) { 
-				writer.println(sc.next()); 
+				writer.println(sc.nextLine()); 
 			}
-			
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		}			
