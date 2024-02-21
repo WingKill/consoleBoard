@@ -30,13 +30,14 @@ public class Post {
 	
 	// 게시글 작성 시 사용하는 생성자
 	public Post(String title,String writer,String mainText) {
-		maxNum = Board.list_size;
+		maxNum = Board.list_numbering;
 		this.postNum = ++maxNum;
 		this.title = title;
 		this.writer = writer;
 		this.mainText = mainText;
 	}
 	
+	// setters and getters
 	public String getWriteDate() {
 		return writeDate;
 	}

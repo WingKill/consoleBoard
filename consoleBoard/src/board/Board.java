@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Scanner;
 
 import board.Post;
-import dataBase.DataBase;
+import dataBase.Database;
 
 public class Board {	
 	Scanner sc = new Scanner(System.in);
-	public static int list_size = 0;
+	public static int list_numbering = 0;
 	private List<Post> list;
     private PrintWriter writer;
     
@@ -20,16 +20,17 @@ public class Board {
     private int updatePage = 0;
     // 게시글 추가, 수정, 삭제 시 활용할 Post형 변수
     private Post post;
-    // 게시글 추가, 수정, 삭제 시 활용할, 동일 대상 유무를 확인하는 용도로 쓰이는 문자열
+    // 게시글 추가, 수정, 삭제 시 활용할,동일 대상 유무를 확인하는 용도로 쓰이는 문자열
     private String writerIP;
-    
+
     public Board(OutputStream out, String writerIP) {
     	writer = new PrintWriter(out, true);
     	this.writerIP = writerIP;
     	// 데이터베이스 목록을 가져오기 위해 먼저 데이터베이스 쓰레드 실행.
     	resetList();
     }
-               
+              
+    // setters and getters
     public Post getPost() {
 		return post;
 	}
@@ -64,11 +65,16 @@ public class Board {
 	// 데이터베이스 쓰레드를 실행하고 리스트를 받는 메서드
 	private void resetList() {
 		// 데이터베이스 처리
-		DataBase dataBase = new DataBase("A");
+		Database dataBase = new Database("A");
 		dataBase.start();
 		// 리스트 대입
 		list = dataBase.getPostList();
-		list_size = list.size();
+		list_numbering = list.size();
+		for(Post post : list) {
+			if(list_numbering < post.getPostNum()) {
+				list_numbering = post.getPostNum();
+			}
+		}		
 	}
 	
 	// 리스트
@@ -84,17 +90,17 @@ public class Board {
 						 + post.getWriteDate() + " | ");
 		}
 		showMenu();	
-		serverShowList();
+		System.out.println("게시글 목록 보기 과정이 진행되었습니다.");
 	}
 	
-	// 현 시간을 정해진 패턴으로 표현하고, 이를 String으로 변환
+	// 현 시간을 정해진 패턴으로 표현하고, 이를 String으로 변환 - 시간을 String으로 변환. insert, update에서 사용.
 	private String nowDateFormatStr() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String now = sdf.format(new Date());
 		return now;
 	}
 	
-	// 조건에 맞는 게시글 찾기 
+	// 수정 전, 조건에 맞는 게시글 찾기 
 	public Post wantUpdatePost(int updatePage) {
 		Post post = null;
 		for(Post wantedPost : list) {
@@ -113,7 +119,7 @@ public class Board {
 		
 		list.add(post);
 		// 데이터베이스 처리
-		DataBase dataBase = new DataBase(page, post);
+		Database dataBase = new Database(page, post);
 		dataBase.start();
 		
 		writer.println("글이 추가되었습니다.");
@@ -122,8 +128,8 @@ public class Board {
 		post = new Post();
 		// 리스트 초기화
 		resetList();
+		System.out.println("게시글 입력 과정이 진행되었습니다.");
 		showMenu();
-		serverShowList();
 	}
 	
 	// 내용을 확인할 글을 찾고 수정하는 과정
@@ -164,18 +170,17 @@ public class Board {
 			post.setMainText(mainTexts);
 			// 날짜 까먹지 않기.
 			post.setUpdateDate(nowDateFormatStr());
-			DataBase dataBase = new DataBase("D",post);
+			Database dataBase = new Database("D",post);
 			dataBase.start();
 			writer.println("수정되었습니다.");
 			System.out.println(post.getPostNum()+"번 글이 " + writerIP + "에 의해 수정되었습니다.");
 		}else {
 			writer.println("정상적인 처리가 되지 않았습니다. 메뉴로 돌아갑니다.");
-		}
+		}		 
 		// 초기화
 		post = new Post();
 		resetList();
 		showMenu();
-		serverShowList();
 	}
 	
 	// 글을 삭제하는 과정
@@ -193,31 +198,12 @@ public class Board {
 		}
 		
 		// 데이터베이스에서도 없애주기.
-		DataBase dataBase = new DataBase("E", post);
+		Database dataBase = new Database("E", post);
 		dataBase.start();
 		
 		writer.println("삭제되었습니다.");
 		resetList();
-		
+		System.out.println(writerIP + "에 의해" + delNum + "게시글 삭제 과정이 진행되었습니다.");
 		showMenu();
-		serverShowList();
-	}
-	
-	// 서버에 보여주는 리스트
-	private void serverShowList() {
-		System.out.println("-------------------------------------------------------");
-		System.out.println("  | 전체 번호 | 게시글 제목 | 게시글 작성자  | 게시글 작성일 |");
-		System.out.println("-------------------------------------------------------");
-		if(list == null) {
-			System.out.println("  |         |             |          |          |");
-		}else {
-			for(Post post : list) {
-				System.out.println(post.getPostNum() + " | " 
-							 + post.getTitle() + " | "
-							 + post.getWriter() + " | "
-							 + post.getWriteDate() + " | ");
-			}
-		}
-	}
-
+	}	
 }

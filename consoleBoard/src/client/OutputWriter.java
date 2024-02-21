@@ -31,11 +31,13 @@ public class OutputWriter extends Thread{
 			e.printStackTrace(); 
 		} finally {
             try {
-                socket.close(); // 소켓 닫기
-                sc.close();
+            	if(socket != null) {
+            		socket.close(); // 소켓 닫기
+            	}                           	
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }			
+        }
+		sc.close();
 	}
 }

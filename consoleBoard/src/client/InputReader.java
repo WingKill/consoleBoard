@@ -19,17 +19,19 @@ public class InputReader extends Thread{
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			
 			String readvalue;
-			while((readvalue = reader.readLine()) != null) { 
-				System.out.println(readvalue);
-				if(readvalue.equals("종료합니다.")) {
-					break;
-				}
-			}			
+			while((readvalue = reader.readLine()) != null ) {
+				if (readvalue.equals("F")) {
+                    break; // 서버에서 종료 요청을 받으면 입력 루프 종료
+                }
+				System.out.println(readvalue);				
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
             try {
-                socket.close(); // 소켓 닫기
+                if (socket != null) {
+                    socket.close(); // 소켓 닫기
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

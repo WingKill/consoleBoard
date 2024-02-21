@@ -30,16 +30,13 @@ public class ServerBoards extends Thread{
 	// 입력 텍스트
 	private void insertText() throws IOException {
 		writer.println("-------------------------------------------------------");
-		writer.println(" | 제목 | :: ");
-		
+		writer.println(" | 제목 | :: ");		
 		String title = reader.readLine();
 		writer.println("-------------------------------------------------------");
 		writer.println(" | 작성자 | :: ");
-
 		String name = reader.readLine();
 		writer.println("-------------------------------------------------------");
 		writer.println(" | 내용 | :: ");
-
 		String mainTexts = reader.readLine();
 		writer.println();
 		board.addPost("B", title, name, mainTexts);
@@ -49,13 +46,11 @@ public class ServerBoards extends Thread{
 	private void updateText() throws IOException {
 		writer.println("| 수정할 글 번호 | :: ");
 		String updatePageStr = reader.readLine();
-		Integer updatePage = Integer.parseInt(updatePageStr);
-		
+		Integer updatePage = Integer.parseInt(updatePageStr);		
 		// 글을 작성한 작가가 같고, 게시글이 있다면		
 		if(board.wantUpdatePost(updatePage).getWriterIP().equals(writerIP) && board.wantUpdatePost(updatePage) != null ) {
 			writer.println("-------------------------------------------------------");
-			writer.println(" | 제목 | :: ");
-	
+			writer.println(" | 제목 | :: ");	
 			String title = reader.readLine();
 			writer.println();
 			writer.println("-------------------------------------------------------");
@@ -77,18 +72,14 @@ public class ServerBoards extends Thread{
 	public void run() {
 		try {
 			System.out.println("서버 : " + socket.getInetAddress() + " IP의 클라이언트와 연결되었습니다"); // 연결 확인용
-
 			// 클라이언트에서 보낸 메세지 읽기
 			input = socket.getInputStream();
-			reader = new BufferedReader(new InputStreamReader(input));
-			
+			reader = new BufferedReader(new InputStreamReader(input));			
 			// 서버에서 클라이언트로 메세지 보내기
 			out = socket.getOutputStream();
-			writer = new PrintWriter(out, true);		
-			
+			writer = new PrintWriter(out, true);				
 			writerIP = socket.getInetAddress().toString();
 			board = new Board(out,writerIP);
-
 			writer.println("--<게시판 프로그램>--");
 			board.showMenu();
 			while ((readValue = reader.readLine()) != null) { // 클라이언트가 메세지 입력시마다 수행
@@ -104,7 +95,7 @@ public class ServerBoards extends Thread{
 					board.showAndUpdatePost(showNum, writerIP); // 내용 보기와 수정 여부 판별			
 				} else if (readValue.equals("D") || readValue.equals("Y")) { // 수정
 					updateText(); 
-				}else if (readValue.equals("N")) {
+				} else if (readValue.equals("N")) {
 					writer.println("취소하셨습니다. 메뉴로 돌아갑니다.");
 					board.showMenu();
 				} else if (readValue.equals("E")) { // 삭제
@@ -113,7 +104,7 @@ public class ServerBoards extends Thread{
 					int delNum = Integer.parseInt(str);
 					board.deletePost(writerIP,delNum);
 				} else if (readValue.equals("F")) {
-					writer.println("종료합니다.");
+					System.out.println(writerIP + "에서 접속을 종료했습니다.");
 					return;
 				} else{
 					writer.println("선택한 게시판 기능이 없습니다. 다시 고르십시오.");
