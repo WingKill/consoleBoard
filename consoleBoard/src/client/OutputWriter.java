@@ -31,7 +31,7 @@ public class OutputWriter extends Thread{
 			e.printStackTrace(); 
 		} finally {
             try {
-            	if(socket != null) {
+            	if(socket != null && !socket.isClosed()) {
             		socket.close(); // 소켓 닫기
             	}                           	
             } catch (IOException e) {

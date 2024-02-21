@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class InputReader extends Thread{
 	private Socket socket = null;
@@ -20,16 +21,16 @@ public class InputReader extends Thread{
 			
 			String readvalue;
 			while((readvalue = reader.readLine()) != null ) {
-				if (readvalue.equals("F")) {
-                    break; // 서버에서 종료 요청을 받으면 입력 루프 종료
-                }
 				System.out.println(readvalue);				
 			}
-		} catch (Exception e) {
+		} catch (SocketException se) {
+	        // 소켓이 닫혔을 때 발생하는 예외 처리
+	        System.out.println("서버와의 연결이 종료되었습니다.");
+	    } catch (Exception e) {
 			e.printStackTrace();
 		} finally {
             try {
-                if (socket != null) {
+                if (socket != null || !socket.isClosed()) {
                     socket.close(); // 소켓 닫기
                 }
             } catch (IOException e) {
