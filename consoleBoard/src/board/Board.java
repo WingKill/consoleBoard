@@ -133,7 +133,7 @@ public class Board {
 	}
 	
 	// 내용을 확인할 글을 찾는 과정.
-	public void showAndUpdatePost(int showNum, String writerName) {
+	public void showAndUpdatePost(int showNum, String writerIP) {
 //		if (showNum <= 0 || showNum > list.get(0).getPostNum() || list == null) {
 //			writer.println("해당하는 번호에 대한 글이 없습니다. 메뉴로 되돌아갑니다.");
 //	        showMenu();
@@ -155,7 +155,7 @@ public class Board {
         writer.println("\t\t\t" +" | 작성자 : " + post.getWriter() + " | "+ post.getWriteDate() + " | ");
         writer.println("--------------------------내용--------------------------");
         writer.println(post.getMainText());
-        if(writerName.equals(post.getWriter())) {
+        if(writerIP.equals(post.getWriter())) {
         	writer.println("-------------------------------------------------------");
         	writer.println("\t\t\t | Y. 수정 | N. 취소 | ");
         	writer.println("-------------------------------------------------------");

@@ -15,13 +15,7 @@ import board.Post;
 
 public class Database extends Thread{
 	// 서버 측에서 접근하는 데이터베이스 정보
-	private static final String url = "jdbc:oracle:thin:@localhost:1521:XE";
-	/*
-	 * JDBC URL은 여러 가지 형식을 가질 수 있다.
-	 * "jdbc:oracle:thin:@localhost:1521:XE" 
-	 * "jdbc:oracle:thin:@//localhost:1521/xe"
-	 * 두 가지 url 모두, Oracle 데이터베이스에 접속하기 위한 URL이며, 호스트, 포트, 서비스 이름 또는 SID를 지정한다.
-	 */	 
+	private static final String url = "jdbc:oracle:thin:@localhost:1521:XE";	
     private static final String user = "userdata";
     private static final String password = "data123";
     
@@ -30,7 +24,7 @@ public class Database extends Thread{
     
     // 클라이언트에서 입력하는 접근 경로
     private String page = "";
-    // 결과값을 가져오기.
+    // 입력, 수정, 삭제 결과값을 가져오기. 해당 상태는 메서드 실행 전 값을 나타냄. 
     private int result = -1;
     
     // 페이지 
@@ -71,13 +65,6 @@ public class Database extends Thread{
 		this.post = post;
 	}
 		
-	public int getResult() {
-		return result;
-	}
-
-	public void setResult(int result) {
-		this.result = result;
-	}
 
 	// String 형을 Timestamp형으로 변환하여 리턴하는 메서드. oracle sql이므로 Timestamp형을 썼다.
 	// 이 자바 클래스 내 사용하는 Date 클래스는 java.util.Date이고 이미 import했으므로, java.sql.Date로 바꾸려면 따로 써줘야 함.
@@ -107,7 +94,9 @@ public class Database extends Thread{
 					+ "WRITER_IP "
 					+ "FROM post order by postnum desc";
 			}else if(page.equals("B")) {
-				sql = "insert into post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE, WRITER_IP) values (?, ?, ?, ?, ?, ?)";
+				sql = "insert into "
+					+ "post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE,WRITER_IP) "
+					+ "values (?, ?, ?, ?, ?, ?)";
 			}else if(page.equals("D")) {
 				sql = "update post set TITLE = ? , MAIN_TEXT = ? , update_date = ? where postnum = ?";
 			}else if(page.equals("E")) {
@@ -122,8 +111,7 @@ public class Database extends Thread{
 				 * WRITER_IP FROM post order by postnum desc"
 				 */ 
 				// 쿼리 실행
-				resultSet = statement.executeQuery();
-				
+				resultSet = statement.executeQuery();			
 				// 서버에서 오류 체크하기
 				if(resultSet == null) {
 					System.out.println("호출 발생. \n 목록이 없거나, 처리가 되지 않았거나, 오류가 발생한 것으로 간주됩니다.");
@@ -141,7 +129,7 @@ public class Database extends Thread{
 					if(writerIP == null) {
 						writerIP = "초기값 없음";
 					}
-					post = new Post(postNum,title,writer,mainText,writeDate, writerIP);
+					post = new Post(postNum,title,writer,mainText,writeDate,writerIP);
 					postList.add(post);
 				}					
 				break;
@@ -163,15 +151,14 @@ public class Database extends Thread{
 				statement.setString(2,post.getMainText());
 				// 기존에 만들어놓은 변환 메서드 사용
 				statement.setTimestamp(3, strFormatTs(post.getUpdateDate()));
-				statement.setInt(4, post.getPostNum());
-				
-				statement.executeUpdate();
+				statement.setInt(4, post.getPostNum());			
+				result = statement.executeUpdate();
 				message(page,result);
 				break;
 			case "E" : // 삭제
 				// "delete FROM post where postnum = ?"
 				statement.setInt(1, post.getPostNum());
-				statement.executeUpdate();
+				result = statement.executeUpdate();
 				message(page,result);
 				break;
 			}			
@@ -190,6 +177,7 @@ public class Database extends Thread{
 	}
 	
 	private void message(String page, int result) {
+		this.result = 0;
 		switch(page) {
 		case "B" :
 			System.out.println("sql insert가 진행됐습니다.");
@@ -203,12 +191,6 @@ public class Database extends Thread{
 			System.out.println("sql delete가 진행됐습니다.");
 			msgOfResult(result);
 			break;
-		}
-		
-		if(result >= 0) {
-			
-		}else {
-			System.out.println();
 		}
 		this.result = -1;
 	}
