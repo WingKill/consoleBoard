@@ -13,12 +13,11 @@ public class OutputWriter extends Thread{
 	}
 	
 	@Override
-	public void run() {
-		Scanner sc= new Scanner(System.in);
-		try {
-			// 클라이언트에서 Server로 메세지를 발송 
-			OutputStream out = socket.getOutputStream(); 
-			PrintWriter writer = new PrintWriter(out, true);
+	public void run() {	
+		// 클라이언트에서 Server로 메세지를 발송 
+		try (OutputStream out = socket.getOutputStream(); 
+			 PrintWriter writer = new PrintWriter(out, true);
+			 Scanner sc= new Scanner(System.in);){			
 			// 메뉴 입력하기
 			while(true) {
 				String sendMessage = sc.nextLine();
@@ -30,14 +29,14 @@ public class OutputWriter extends Thread{
 		} catch (Exception e) {
 			e.printStackTrace(); 
 		} finally {
+			// 소켓 닫기는 해당 클래스에서만 진행한다.
             try {
             	if(socket != null && !socket.isClosed()) {
-            		socket.close(); // 소켓 닫기
+            		socket.close(); 
             	}                           	
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException e2) {
+                e2.printStackTrace();
             }
         }
-		sc.close();
 	}
 }

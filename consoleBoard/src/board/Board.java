@@ -132,20 +132,23 @@ public class Board {
 		showMenu();
 	}
 	
-	// 내용을 확인할 글을 찾고 수정하는 과정
+	// 내용을 확인할 글을 찾는 과정.
 	public void showAndUpdatePost(int showNum, String writerName) {
-		if (showNum <= 0 || showNum > list.size() || list == null) {
-            writer.println("해당하는 번호에 대한 글이 없습니다. 메뉴로 되돌아갑니다.");
-            showMenu();
-            return;
-        }
-		
+//		if (showNum <= 0 || showNum > list.get(0).getPostNum() || list == null) {
+//			writer.println("해당하는 번호에 대한 글이 없습니다. 메뉴로 되돌아갑니다.");
+//	        showMenu();
+//            return;
+//		}		
 		for(Post post : list) {
 			if(post.getPostNum() == showNum) {
 				this.post = post;
 			}
 		}		
-		
+		if(post == null) {
+			writer.println("해당하는 번호에 대한 글이 없습니다. 메뉴로 되돌아갑니다.");
+	        showMenu();
+			return;
+		}		
 		writer.println("-------------------------------------------------------");
         writer.println(" | " + post.getPostNum() + " | 제목 : " + post.getTitle() + " | "); 
         writer.println("-------------------------------------------------------");
@@ -189,14 +192,12 @@ public class Board {
 			if(post.getPostNum() == delNum)
 				// 삭제 대상인 post 분류
 				this.post = post; 
-		}
-		
+		}		
 		if(post == null || !this.writerIP.equals(writerIP)) {
 			writer.println("삭제가 진행되지 못하는 상태입니다. 메뉴로 돌아갑니다.");
 			showMenu();
 			return;
-		}
-		
+		}		
 		// 데이터베이스에서도 없애주기.
 		Database dataBase = new Database("E", post);
 		dataBase.start();

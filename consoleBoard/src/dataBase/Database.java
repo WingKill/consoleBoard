@@ -89,7 +89,7 @@ public class Database extends Thread{
 		Timestamp timestamp = new Timestamp(date.getTime());
 		return timestamp;
 	}
-    
+ 
 	@Override
 	public synchronized void run() {
 		// try with resource - connection close를 따로 처리하지 않아도 자동 처리
@@ -99,7 +99,13 @@ public class Database extends Thread{
 			// page 정보 - "| A. 전체 목록  | B. 새 글 쓰기 | C. 내용 보기 | D. 작성 글 수정 | E. 글 삭제 | F. 종료 |"
 			String sql = null;
 			if(page.equals("A")) {
-				sql = "SELECT postnum, writer, title, main_text,to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate, WRITER_IP FROM post order by postnum desc";
+				sql = "SELECT "
+					+ "postnum, "
+					+ "writer, "
+					+ "title, "
+					+ "main_text,to_char(write_date, 'YYYY-MM-DD HH24:MI:SS') AS writedate, "
+					+ "WRITER_IP "
+					+ "FROM post order by postnum desc";
 			}else if(page.equals("B")) {
 				sql = "insert into post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE, WRITER_IP) values (?, ?, ?, ?, ?, ?)";
 			}else if(page.equals("D")) {

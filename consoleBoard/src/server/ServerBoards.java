@@ -27,51 +27,12 @@ public class ServerBoards extends Thread{
 		this.socket = socket;
 	}
 	
-	// 입력 텍스트
-	private void insertText() throws IOException {
-		writer.println("-------------------------------------------------------");
-		writer.println(" | 제목 | :: ");		
-		String title = reader.readLine();
-		writer.println("-------------------------------------------------------");
-		writer.println(" | 작성자 | :: ");
-		String name = reader.readLine();
-		writer.println("-------------------------------------------------------");
-		writer.println(" | 내용 | :: ");
-		String mainTexts = reader.readLine();
-		writer.println();
-		board.addPost("B", title, name, mainTexts);
-	}
-	
-	// 수정 텍스트
-	private void updateText() throws IOException {
-		writer.println("| 수정할 글 번호 | :: ");
-		String updatePageStr = reader.readLine();
-		Integer updatePage = Integer.parseInt(updatePageStr);		
-		// 글을 작성한 작가가 같고, 게시글이 있다면		
-		if(board.wantUpdatePost(updatePage).getWriterIP().equals(writerIP) && board.wantUpdatePost(updatePage) != null ) {
-			writer.println("-------------------------------------------------------");
-			writer.println(" | 제목 | :: ");	
-			String title = reader.readLine();
-			writer.println();
-			writer.println("-------------------------------------------------------");
-			writer.println(" | 작성자 | :: ");
-			String name = reader.readLine();	
-			writer.println();
-			writer.println("-------------------------------------------------------");
-			writer.println(" | 내용 | :: ");		
-			String mainTexts = reader.readLine();
-			writer.println();
-			board.updatePost(updatePage, title, name, writerIP, mainTexts);
-		}else {
-			writer.println("수정 권한이 없거나 잘못된 경로로 진입했습니다. 메뉴로 돌아갑니다.");
-			board.showMenu();
-		}
-	}
-	
 	@Override
 	public void run() {
 		try {
-			System.out.println("서버 : " + socket.getInetAddress() + " IP의 클라이언트와 연결되었습니다"); // 연결 확인용
+			System.out.println("서버 : " +
+								socket.getInetAddress() +
+								" IP의 클라이언트와 연결되었습니다"); // 연결 확인용
 			// 클라이언트에서 보낸 메세지 읽기
 			input = socket.getInputStream();
 			reader = new BufferedReader(new InputStreamReader(input));			
@@ -114,5 +75,46 @@ public class ServerBoards extends Thread{
 			e.printStackTrace(); 
 		} 
 	}
-
+	
+	// 입력 텍스트
+	private void insertText() throws IOException {
+		writer.println("-------------------------------------------------------");
+		writer.println(" | 제목 | :: ");		
+		String title = reader.readLine();
+		writer.println("-------------------------------------------------------");
+		writer.println(" | 작성자 | :: ");
+		String name = reader.readLine();
+		writer.println("-------------------------------------------------------");
+		writer.println(" | 내용 | :: ");
+		String mainTexts = reader.readLine();
+		writer.println();
+		board.addPost("B", title, name, mainTexts);
+	}
+	
+	// 수정 텍스트
+	private void updateText() throws IOException {
+		writer.println("| 수정할 글 번호 | :: ");
+		String updatePageStr = reader.readLine();
+		Integer updatePage = Integer.parseInt(updatePageStr);		
+		// 글을 작성한 작가가 같고, 게시글이 있다면		
+		if(board.wantUpdatePost(updatePage).getWriterIP().equals(writerIP) 
+		   && board.wantUpdatePost(updatePage) != null ) {
+			writer.println("-------------------------------------------------------");
+			writer.println(" | 제목 | :: ");	
+			String title = reader.readLine();
+			writer.println();
+			writer.println("-------------------------------------------------------");
+			writer.println(" | 작성자 | :: ");
+			String name = reader.readLine();	
+			writer.println();
+			writer.println("-------------------------------------------------------");
+			writer.println(" | 내용 | :: ");		
+			String mainTexts = reader.readLine();
+			writer.println();
+			board.updatePost(updatePage, title, name, writerIP, mainTexts);
+		}else {
+			writer.println("수정 권한이 없거나 잘못된 경로로 진입했습니다. 메뉴로 돌아갑니다.");
+			board.showMenu();
+		}
+	}
 }

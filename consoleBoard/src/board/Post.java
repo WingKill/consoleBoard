@@ -19,13 +19,18 @@ public class Post {
 	}
 	
 	// 데이터베이스에서 가져와 대입하는 생성자
-	public Post(int postNum, String title,String writer,String mainText,String writeDate, String writerName) {
+	public Post(int postNum, 
+				String title,
+				String writer,
+				String mainText,
+				String writeDate,
+				String writerIP) {
 		this.postNum = postNum;
 		this.title = title;
 		this.writer = writer;
 		this.mainText = mainText;
 		this.writeDate = writeDate;
-		this.writerIP = writerName;
+		this.writerIP = writerIP;
 	}
 	
 	// 게시글 작성 시 사용하는 생성자
