@@ -40,6 +40,7 @@ public class Post {
 		this.title = title;
 		this.writer = writer;
 		this.mainText = mainText;
+		
 	}
 	
 	// setters and getters

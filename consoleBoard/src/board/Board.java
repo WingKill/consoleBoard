@@ -112,6 +112,7 @@ public class Board {
 	
 	// 리스트에 게시글 추가하는 과정
 	public void addPost(String page, String title, String name, String mainTexts) {
+		resetList();
 		post = new Post(title,name,mainTexts);
 		// 작성 날짜에 대한 패턴 지정
 		post.setWriteDate(nowDateFormatStr());
@@ -139,6 +140,7 @@ public class Board {
 //	        showMenu();
 //            return;
 //		}		
+		resetList();
 		for(Post post : list) {
 			if(post.getPostNum() == showNum) {
 				this.post = post;
@@ -168,6 +170,7 @@ public class Board {
 	
 	// 글을 수정하는 과정
 	public void updatePost(int page, String title, String name, String writerIP,String mainTexts) {
+		resetList();
 		if(post.getPostNum() == page && this.writerIP.equals(writerIP)) {
 			post.setTitle(title);
 			post.setMainText(mainTexts);
@@ -188,6 +191,7 @@ public class Board {
 	
 	// 글을 삭제하는 과정
 	public void deletePost(String writerIP, int delNum) {
+		resetList();
 		for(Post post : list) {
 			if(post.getPostNum() == delNum)
 				// 삭제 대상인 post 분류

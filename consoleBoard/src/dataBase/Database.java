@@ -96,7 +96,7 @@ public class Database extends Thread{
 			}else if(page.equals("B")) {
 				sql = "insert into "
 					+ "post(POSTNUM,TITLE,WRITER,MAIN_TEXT,WRITE_DATE,WRITER_IP) "
-					+ "values (?, ?, ?, ?, ?, ?)";
+					+ "values (?,?,?,?,?,?)";
 			}else if(page.equals("D")) {
 				sql = "update post set TITLE = ? , MAIN_TEXT = ? , update_date = ? where postnum = ?";
 			}else if(page.equals("E")) {
@@ -127,7 +127,7 @@ public class Database extends Thread{
 					String writeDate = resultSet.getString("writedate");
 					String writerIP = resultSet.getString("WRITER_IP");
 					if(writerIP == null) {
-						writerIP = "초기값 없음";
+						writerIP = "초기값 없음";	
 					}
 					post = new Post(postNum,title,writer,mainText,writeDate,writerIP);
 					postList.add(post);

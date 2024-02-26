@@ -87,7 +87,6 @@ public class ServerBoards extends Thread{
 		writer.println("-------------------------------------------------------");
 		writer.println(" | 내용 | :: ");
 		String mainTexts = reader.readLine();
-		writer.println();
 		board.addPost("B", title, name, mainTexts);
 	}
 	
@@ -110,7 +109,6 @@ public class ServerBoards extends Thread{
 			writer.println("-------------------------------------------------------");
 			writer.println(" | 내용 | :: ");		
 			String mainTexts = reader.readLine();
-			writer.println();
 			board.updatePost(updatePage, title, name, writerIP, mainTexts);
 		}else {
 			writer.println("수정 권한이 없거나 잘못된 경로로 진입했습니다. 메뉴로 돌아갑니다.");
