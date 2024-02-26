@@ -140,7 +140,6 @@ public class Board {
 //	        showMenu();
 //            return;
 //		}		
-		resetList();
 		for(Post post : list) {
 			if(post.getPostNum() == showNum) {
 				this.post = post;
@@ -157,7 +156,7 @@ public class Board {
         writer.println("\t\t\t" +" | 작성자 : " + post.getWriter() + " | "+ post.getWriteDate() + " | ");
         writer.println("--------------------------내용--------------------------");
         writer.println(post.getMainText());
-        if(writerIP.equals(post.getWriter())) {
+        if(writerIP.equals(post.getWriterIP())) {
         	writer.println("-------------------------------------------------------");
         	writer.println("\t\t\t | Y. 수정 | N. 취소 | ");
         	writer.println("-------------------------------------------------------");
@@ -170,7 +169,6 @@ public class Board {
 	
 	// 글을 수정하는 과정
 	public void updatePost(int page, String title, String name, String writerIP,String mainTexts) {
-		resetList();
 		if(post.getPostNum() == page && this.writerIP.equals(writerIP)) {
 			post.setTitle(title);
 			post.setMainText(mainTexts);
@@ -191,7 +189,6 @@ public class Board {
 	
 	// 글을 삭제하는 과정
 	public void deletePost(String writerIP, int delNum) {
-		resetList();
 		for(Post post : list) {
 			if(post.getPostNum() == delNum)
 				// 삭제 대상인 post 분류
@@ -204,8 +201,7 @@ public class Board {
 		}		
 		// 데이터베이스에서도 없애주기.
 		Database dataBase = new Database("E", post);
-		dataBase.start();
-		
+		dataBase.start();		
 		writer.println("삭제되었습니다.");
 		resetList();
 		System.out.println(writerIP + "에 의해" + delNum + "게시글 삭제 과정이 진행되었습니다.");

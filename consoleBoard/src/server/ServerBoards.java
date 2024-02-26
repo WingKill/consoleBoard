@@ -92,9 +92,16 @@ public class ServerBoards extends Thread{
 	
 	// 수정 텍스트
 	private void updateText() throws IOException {
+		Integer updatePage = null;
+		if(readValue.equals("Y")) {
+			updatePage = board.getPost().getPostNum();
+			writer.println("| 수정할 글 번호 | :: " + updatePage);			
+		}
+		else {
 		writer.println("| 수정할 글 번호 | :: ");
 		String updatePageStr = reader.readLine();
-		Integer updatePage = Integer.parseInt(updatePageStr);		
+		updatePage = Integer.parseInt(updatePageStr);
+		}
 		// 글을 작성한 작가가 같고, 게시글이 있다면		
 		if(board.wantUpdatePost(updatePage).getWriterIP().equals(writerIP) 
 		   && board.wantUpdatePost(updatePage) != null ) {
